@@ -1042,3 +1042,9 @@ selection happens before a run; a failed training job is not silently restarted.
 Native runs save their policy, normalization statistics, configuration,
 evaluation, and replay under `runs/`. Keep those files together when restoring.
 Independent native processes should use separate `--runs-dir` directories.
+
+## License
+
+MIT. See [`LICENSE`](LICENSE). The bundled SkinTokens giraffe example keeps its own MIT notice in
+`morpholab/static/demos/auto-rig-SkinTokens-LICENSE.txt`, and the browser build records the licenses of its
+vendored runtimes under `vendor/`.

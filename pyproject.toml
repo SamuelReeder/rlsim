@@ -7,6 +7,7 @@ name = "morpholab"
 version = "0.1.0"
 description = "RLsim: editable creatures learning locomotion with MuJoCo and GPU or CPU PPO"
 requires-python = ">=3.11"
+license = "MIT"
 dependencies = [
   "mujoco==3.16.0",
   "gymnasium==1.4.0",
