@@ -1,0 +1,1352 @@
+{
+  "format": "rlsim-auto-rig-study-v1",
+  "tested_at": "2026-10-21",
+  "upstream": "https://github.com/VAST-AI-Research/SkinTokens",
+  "upstream_revision": "273b691d35989d71cd17ff2895fdc735097b92d1",
+  "gpu": "NVIDIA GeForce RTX 5080",
+  "physics": "MuJoCo 3.16.0 WASM / CPU",
+  "locomotion_trained": false,
+  "examples": [
+    {
+      "name": "giraffe",
+      "file": "auto-rig-giraffe.glb",
+      "sha256": "786bfd1fc39e224f15d624dd04f60cd87fc59cffa79a436124f4513721195b89",
+      "generation_seconds": 74.76270218403079,
+      "fidelity": {
+        "format": "rlsim-rig-fidelity-v1",
+        "source_sha256": "9a947cae00b169345802c08885c1e54313c6ce93c885bacf8e37e8a1f18f9e3b",
+        "prediction_sha256": "83ff81e8e0bd1cdc597348608d1ec07bd146346aaba513b0c167d062ea7ed132",
+        "original_geometry_preserved": true,
+        "original_materials_preserved": true,
+        "original_vertices": 14807,
+        "joints": 47,
+        "max_surface_error": 0.0,
+        "surface_tolerance": 0.0004505760103031979,
+        "weight_transfer": "nearest coincident rest vertex",
+        "note": "Preserves rest geometry and materials; predicted deformation and physics still need review.",
+        "skeleton_review": {
+          "method": "near-symmetric surface / mirrored joint proximity",
+          "findings": [],
+          "scope": "Flags some missing branches. Does not verify limb count, anatomy or intended joint limits."
+        }
+      },
+      "physics": {
+        "format": "rlsim-physics-checks-v1",
+        "status": "review",
+        "checks": [
+          {
+            "id": "structure",
+            "level": "pass",
+            "message": "Connected physics model compiled: 47 parts, 47 joints, 138 controls."
+          },
+          {
+            "id": "joint-assumptions",
+            "level": "warning",
+            "message": "Using a generic skeleton. Joint axes and limits need review; unnamed bones do not identify knees, ankles or other anatomical constraints."
+          },
+          {
+            "id": "mass",
+            "level": "pass",
+            "message": "Mass distribution is finite (10.00 kg total).",
+            "total_mass": 10,
+            "mass_ratio": 201.7784776071954
+          },
+          {
+            "id": "floor",
+            "level": "pass",
+            "message": "The rest pose has no deep floor penetration.",
+            "penetration_m": 0
+          },
+          {
+            "id": "overlaps",
+            "level": "warning",
+            "message": "Non-neighbor collision shapes overlap: bone_012 / bone_014, bone_020 / bone_026, bone_028 / bone_046, bone_029 / bone_046, bone_030 / bone_046, bone_031 / bone_042, bone_032 / bone_043, bone_032 / bone_044, bone_044 / bone_046. Self-contact remains disabled.",
+            "pairs_tested": 132,
+            "partial": false
+          },
+          {
+            "id": "motors",
+            "level": "pass",
+            "message": "All 138 controls responded to small positive and negative commands in zero gravity.",
+            "responses": [
+              {
+                "name": "motor_bone_001_0",
+                "peak_response_speed": 5.8037884189490185
+              },
+              {
+                "name": "motor_bone_001_1",
+                "peak_response_speed": 6.971332521768462
+              },
+              {
+                "name": "motor_bone_001_2",
+                "peak_response_speed": 7.311362316153566
+              },
+              {
+                "name": "motor_bone_002_0",
+                "peak_response_speed": 6.605849023928972
+              },
+              {
+                "name": "motor_bone_002_1",
+                "peak_response_speed": 6.948886579644805
+              },
+              {
+                "name": "motor_bone_002_2",
+                "peak_response_speed": 7.262097244616443
+              },
+              {
+                "name": "motor_bone_003_0",
+                "peak_response_speed": 5.914895708760782
+              },
+              {
+                "name": "motor_bone_003_1",
+                "peak_response_speed": 6.828664592455388
+              },
+              {
+                "name": "motor_bone_003_2",
+                "peak_response_speed": 7.012739858178161
+              },
+              {
+                "name": "motor_bone_004_0",
+                "peak_response_speed": 6.309792252179995
+              },
+              {
+                "name": "motor_bone_004_1",
+                "peak_response_speed": 7.495712049780236
+              },
+              {
+                "name": "motor_bone_004_2",
+                "peak_response_speed": 7.714995735772134
+              },
+              {
+                "name": "motor_bone_005_0",
+                "peak_response_speed": 6.863397579584011
+              },
+              {
+                "name": "motor_bone_005_1",
+                "peak_response_speed": 7.721041808985117
+              },
+              {
+                "name": "motor_bone_005_2",
+                "peak_response_speed": 8.021330987778466
+              },
+              {
+                "name": "motor_bone_006_0",
+                "peak_response_speed": 7.3104499192612185
+              },
+              {
+                "name": "motor_bone_006_1",
+                "peak_response_speed": 7.989447841969744
+              },
+              {
+                "name": "motor_bone_006_2",
+                "peak_response_speed": 8.17595694351856
+              },
+              {
+                "name": "motor_bone_007_0",
+                "peak_response_speed": 7.539132553873229
+              },
+              {
+                "name": "motor_bone_007_1",
+                "peak_response_speed": 8.14886031535643
+              },
+              {
+                "name": "motor_bone_007_2",
+                "peak_response_speed": 8.267230664734473
+              },
+              {
+                "name": "motor_bone_008_0",
+                "peak_response_speed": 7.694472597864602
+              },
+              {
+                "name": "motor_bone_008_1",
+                "peak_response_speed": 8.274220173491331
+              },
+              {
+                "name": "motor_bone_008_2",
+                "peak_response_speed": 8.343204430479503
+              },
+              {
+                "name": "motor_bone_009_0",
+                "peak_response_speed": 7.882960353230805
+              },
+              {
+                "name": "motor_bone_009_1",
+                "peak_response_speed": 8.432374777944442
+              },
+              {
+                "name": "motor_bone_009_2",
+                "peak_response_speed": 8.418963030878977
+              },
+              {
+                "name": "motor_bone_010_0",
+                "peak_response_speed": 8.151806147793664
+              },
+              {
+                "name": "motor_bone_010_1",
+                "peak_response_speed": 8.611957038362121
+              },
+              {
+                "name": "motor_bone_010_2",
+                "peak_response_speed": 8.504975793349011
+              },
+              {
+                "name": "motor_bone_011_0",
+                "peak_response_speed": 8.543180455973394
+              },
+              {
+                "name": "motor_bone_011_1",
+                "peak_response_speed": 8.769590481086524
+              },
+              {
+                "name": "motor_bone_011_2",
+                "peak_response_speed": 8.599958842524826
+              },
+              {
+                "name": "motor_bone_012_0",
+                "peak_response_speed": 8.851490712477265
+              },
+              {
+                "name": "motor_bone_012_1",
+                "peak_response_speed": 8.815463362389416
+              },
+              {
+                "name": "motor_bone_012_2",
+                "peak_response_speed": 8.741171699049424
+              },
+              {
+                "name": "motor_bone_013_0",
+                "peak_response_speed": 8.991176921460998
+              },
+              {
+                "name": "motor_bone_013_1",
+                "peak_response_speed": 8.992601840416475
+              },
+              {
+                "name": "motor_bone_013_2",
+                "peak_response_speed": 8.990547847832158
+              },
+              {
+                "name": "motor_bone_014_0",
+                "peak_response_speed": 8.9918817423048
+              },
+              {
+                "name": "motor_bone_014_1",
+                "peak_response_speed": 8.992376127200504
+              },
+              {
+                "name": "motor_bone_014_2",
+                "peak_response_speed": 8.99166926038701
+              },
+              {
+                "name": "motor_bone_015_0",
+                "peak_response_speed": 8.992684328274617
+              },
+              {
+                "name": "motor_bone_015_1",
+                "peak_response_speed": 8.992727651584406
+              },
+              {
+                "name": "motor_bone_015_2",
+                "peak_response_speed": 8.992692186585554
+              },
+              {
+                "name": "motor_bone_016_0",
+                "peak_response_speed": 8.992831073346832
+              },
+              {
+                "name": "motor_bone_016_1",
+                "peak_response_speed": 8.992846635809123
+              },
+              {
+                "name": "motor_bone_016_2",
+                "peak_response_speed": 8.992830626952877
+              },
+              {
+                "name": "motor_bone_017_0",
+                "peak_response_speed": 8.991105471312512
+              },
+              {
+                "name": "motor_bone_017_1",
+                "peak_response_speed": 8.988776852633515
+              },
+              {
+                "name": "motor_bone_017_2",
+                "peak_response_speed": 8.99014810809215
+              },
+              {
+                "name": "motor_bone_018_0",
+                "peak_response_speed": 8.991635179934873
+              },
+              {
+                "name": "motor_bone_018_1",
+                "peak_response_speed": 8.987203947095965
+              },
+              {
+                "name": "motor_bone_018_2",
+                "peak_response_speed": 8.989075346140975
+              },
+              {
+                "name": "motor_bone_019_0",
+                "peak_response_speed": 4.644687560229387
+              },
+              {
+                "name": "motor_bone_019_1",
+                "peak_response_speed": 5.475560614898619
+              },
+              {
+                "name": "motor_bone_019_2",
+                "peak_response_speed": 7.850334017928003
+              },
+              {
+                "name": "motor_bone_020_0",
+                "peak_response_speed": 5.71406070819703
+              },
+              {
+                "name": "motor_bone_020_1",
+                "peak_response_speed": 6.166362531073871
+              },
+              {
+                "name": "motor_bone_020_2",
+                "peak_response_speed": 8.534102876694583
+              },
+              {
+                "name": "motor_bone_021_0",
+                "peak_response_speed": 6.460542667476494
+              },
+              {
+                "name": "motor_bone_021_1",
+                "peak_response_speed": 6.511292369883829
+              },
+              {
+                "name": "motor_bone_021_2",
+                "peak_response_speed": 8.964387583463193
+              },
+              {
+                "name": "motor_bone_022_0",
+                "peak_response_speed": 7.977358306195452
+              },
+              {
+                "name": "motor_bone_022_1",
+                "peak_response_speed": 7.986975761907097
+              },
+              {
+                "name": "motor_bone_022_2",
+                "peak_response_speed": 8.988663984802994
+              },
+              {
+                "name": "motor_bone_023_0",
+                "peak_response_speed": 8.98335268659903
+              },
+              {
+                "name": "motor_bone_023_1",
+                "peak_response_speed": 8.983795564604694
+              },
+              {
+                "name": "motor_bone_023_2",
+                "peak_response_speed": 8.991672368115012
+              },
+              {
+                "name": "motor_bone_024_0",
+                "peak_response_speed": 8.991349172229135
+              },
+              {
+                "name": "motor_bone_024_1",
+                "peak_response_speed": 8.99162269685387
+              },
+              {
+                "name": "motor_bone_024_2",
+                "peak_response_speed": 8.99241530628527
+              },
+              {
+                "name": "motor_bone_025_0",
+                "peak_response_speed": 4.648778322836693
+              },
+              {
+                "name": "motor_bone_025_1",
+                "peak_response_speed": 5.478365453570021
+              },
+              {
+                "name": "motor_bone_025_2",
+                "peak_response_speed": 7.85327702345748
+              },
+              {
+                "name": "motor_bone_026_0",
+                "peak_response_speed": 5.712906239315471
+              },
+              {
+                "name": "motor_bone_026_1",
+                "peak_response_speed": 6.166467899949502
+              },
+              {
+                "name": "motor_bone_026_2",
+                "peak_response_speed": 8.538240675369241
+              },
+              {
+                "name": "motor_bone_027_0",
+                "peak_response_speed": 6.443413641783295
+              },
+              {
+                "name": "motor_bone_027_1",
+                "peak_response_speed": 6.495104651730168
+              },
+              {
+                "name": "motor_bone_027_2",
+                "peak_response_speed": 8.96610743022774
+              },
+              {
+                "name": "motor_bone_028_0",
+                "peak_response_speed": 7.947105055936548
+              },
+              {
+                "name": "motor_bone_028_1",
+                "peak_response_speed": 7.957638617823994
+              },
+              {
+                "name": "motor_bone_028_2",
+                "peak_response_speed": 8.988169776721755
+              },
+              {
+                "name": "motor_bone_029_0",
+                "peak_response_speed": 8.98350236728357
+              },
+              {
+                "name": "motor_bone_029_1",
+                "peak_response_speed": 8.984003015757786
+              },
+              {
+                "name": "motor_bone_029_2",
+                "peak_response_speed": 8.991603465843099
+              },
+              {
+                "name": "motor_bone_030_0",
+                "peak_response_speed": 8.99142762406171
+              },
+              {
+                "name": "motor_bone_030_1",
+                "peak_response_speed": 8.991717869841576
+              },
+              {
+                "name": "motor_bone_030_2",
+                "peak_response_speed": 8.992363104577702
+              },
+              {
+                "name": "motor_bone_031_0",
+                "peak_response_speed": 4.649240744292195
+              },
+              {
+                "name": "motor_bone_031_1",
+                "peak_response_speed": 5.225261014998473
+              },
+              {
+                "name": "motor_bone_031_2",
+                "peak_response_speed": 8.58782987951427
+              },
+              {
+                "name": "motor_bone_032_0",
+                "peak_response_speed": 6.724586973324614
+              },
+              {
+                "name": "motor_bone_032_1",
+                "peak_response_speed": 6.829523639920934
+              },
+              {
+                "name": "motor_bone_032_2",
+                "peak_response_speed": 8.802441819503152
+              },
+              {
+                "name": "motor_bone_033_0",
+                "peak_response_speed": 7.88084591872647
+              },
+              {
+                "name": "motor_bone_033_1",
+                "peak_response_speed": 7.89301349881579
+              },
+              {
+                "name": "motor_bone_033_2",
+                "peak_response_speed": 8.98298453177048
+              },
+              {
+                "name": "motor_bone_034_0",
+                "peak_response_speed": 8.974541105202118
+              },
+              {
+                "name": "motor_bone_034_1",
+                "peak_response_speed": 8.974315833849976
+              },
+              {
+                "name": "motor_bone_034_2",
+                "peak_response_speed": 8.990597606457555
+              },
+              {
+                "name": "motor_bone_035_0",
+                "peak_response_speed": 8.990380615589515
+              },
+              {
+                "name": "motor_bone_035_1",
+                "peak_response_speed": 8.990794595981168
+              },
+              {
+                "name": "motor_bone_035_2",
+                "peak_response_speed": 8.991899233101526
+              },
+              {
+                "name": "motor_bone_036_0",
+                "peak_response_speed": 7.171503265739823
+              },
+              {
+                "name": "motor_bone_036_1",
+                "peak_response_speed": 7.301758577787391
+              },
+              {
+                "name": "motor_bone_036_2",
+                "peak_response_speed": 8.907148253650679
+              },
+              {
+                "name": "motor_bone_037_0",
+                "peak_response_speed": 7.746417683005953
+              },
+              {
+                "name": "motor_bone_037_1",
+                "peak_response_speed": 7.834443592442982
+              },
+              {
+                "name": "motor_bone_037_2",
+                "peak_response_speed": 8.948057356250786
+              },
+              {
+                "name": "motor_bone_038_0",
+                "peak_response_speed": 8.216171110626252
+              },
+              {
+                "name": "motor_bone_038_1",
+                "peak_response_speed": 8.273903184913454
+              },
+              {
+                "name": "motor_bone_038_2",
+                "peak_response_speed": 8.967668539435689
+              },
+              {
+                "name": "motor_bone_039_0",
+                "peak_response_speed": 8.590310228287402
+              },
+              {
+                "name": "motor_bone_039_1",
+                "peak_response_speed": 8.623395337489024
+              },
+              {
+                "name": "motor_bone_039_2",
+                "peak_response_speed": 8.980641393586511
+              },
+              {
+                "name": "motor_bone_040_0",
+                "peak_response_speed": 8.814946740336321
+              },
+              {
+                "name": "motor_bone_040_1",
+                "peak_response_speed": 8.82979016393088
+              },
+              {
+                "name": "motor_bone_040_2",
+                "peak_response_speed": 8.988167467742784
+              },
+              {
+                "name": "motor_bone_041_0",
+                "peak_response_speed": 8.983253665357974
+              },
+              {
+                "name": "motor_bone_041_1",
+                "peak_response_speed": 8.984190727542568
+              },
+              {
+                "name": "motor_bone_041_2",
+                "peak_response_speed": 8.992197716572967
+              },
+              {
+                "name": "motor_bone_042_0",
+                "peak_response_speed": 4.55194276586656
+              },
+              {
+                "name": "motor_bone_042_1",
+                "peak_response_speed": 5.193138278587579
+              },
+              {
+                "name": "motor_bone_042_2",
+                "peak_response_speed": 7.689153536474006
+              },
+              {
+                "name": "motor_bone_043_0",
+                "peak_response_speed": 6.17989937792194
+              },
+              {
+                "name": "motor_bone_043_1",
+                "peak_response_speed": 6.445929596740786
+              },
+              {
+                "name": "motor_bone_043_2",
+                "peak_response_speed": 7.683026820111259
+              },
+              {
+                "name": "motor_bone_044_0",
+                "peak_response_speed": 6.40311816460766
+              },
+              {
+                "name": "motor_bone_044_1",
+                "peak_response_speed": 7.048781924761238
+              },
+              {
+                "name": "motor_bone_044_2",
+                "peak_response_speed": 7.777507515339975
+              },
+              {
+                "name": "motor_bone_045_0",
+                "peak_response_speed": 6.095592931669289
+              },
+              {
+                "name": "motor_bone_045_1",
+                "peak_response_speed": 8.450749987813934
+              },
+              {
+                "name": "motor_bone_045_2",
+                "peak_response_speed": 7.808801908527872
+              },
+              {
+                "name": "motor_bone_046_0",
+                "peak_response_speed": 5.936674817112091
+              },
+              {
+                "name": "motor_bone_046_1",
+                "peak_response_speed": 8.3891098762387
+              },
+              {
+                "name": "motor_bone_046_2",
+                "peak_response_speed": 7.8369694044218114
+              }
+            ]
+          },
+          {
+            "id": "simulation",
+            "level": "pass",
+            "message": "Two seconds completed with finite physics states and no simulation resets.",
+            "max_joint_speed": 5.149996584411578
+          },
+          {
+            "id": "support",
+            "level": "info",
+            "message": "The body stayed above the fall threshold during the short passive check.",
+            "fell": false,
+            "initial_height": 1.80117076,
+            "final_height": 0.7495474538713347
+          },
+          {
+            "id": "assumptions",
+            "level": "info",
+            "message": "Joint limits, mass distribution and motor strength are estimates. SkinTokens predicts an animation skeleton; it does not measure anatomy or guarantee locomotion."
+          }
+        ],
+        "scope": "Rest pose, collision geometry, motor response and two seconds without a learned controller. Does not certify walking, anatomy or physical accuracy."
+      },
+      "parts": 47,
+      "controls": 138,
+      "source": "SkinTokens MIT example"
+    },
+    {
+      "name": "humanoid",
+      "file": "auto-rig-humanoid.glb",
+      "sha256": "9ef40f64eb08d8f298a43114ee058ca2776e9fd9ad63573a48ea24f2a5fbfd67",
+      "generation_seconds": 60.347807353013195,
+      "fidelity": {
+        "format": "rlsim-rig-fidelity-v1",
+        "source_sha256": "8f1b7f0caaac35743eeaba0ec9d3867f1b722214e7ea46a8d2521f3432afb8b0",
+        "prediction_sha256": "312ab587f690b9edfa21f0da85dab82aad03cb8132efa06f0c76c0a91f378b18",
+        "original_geometry_preserved": true,
+        "original_materials_preserved": true,
+        "original_vertices": 15858,
+        "joints": 28,
+        "max_surface_error": 0.0,
+        "surface_tolerance": 0.0002660864533302587,
+        "weight_transfer": "nearest coincident rest vertex",
+        "note": "Preserves rest geometry and materials; predicted deformation and physics still need review.",
+        "skeleton_review": {
+          "method": "near-symmetric surface / mirrored joint proximity",
+          "findings": [],
+          "scope": "Flags some missing branches. Does not verify limb count, anatomy or intended joint limits."
+        }
+      },
+      "physics": {
+        "format": "rlsim-physics-checks-v1",
+        "status": "review",
+        "checks": [
+          {
+            "id": "structure",
+            "level": "pass",
+            "message": "Connected physics model compiled: 28 parts, 28 joints, 81 controls."
+          },
+          {
+            "id": "joint-assumptions",
+            "level": "warning",
+            "message": "Using a generic skeleton. Joint axes and limits need review; unnamed bones do not identify knees, ankles or other anatomical constraints."
+          },
+          {
+            "id": "mass",
+            "level": "pass",
+            "message": "Mass distribution is finite (60.00 kg total).",
+            "total_mass": 59.99999999999999,
+            "mass_ratio": 223.33351417613054
+          },
+          {
+            "id": "floor",
+            "level": "pass",
+            "message": "The rest pose has no deep floor penetration.",
+            "penetration_m": 0
+          },
+          {
+            "id": "overlaps",
+            "level": "warning",
+            "message": "Non-neighbor collision shapes overlap: bone_021 / bone_023, bone_025 / bone_027. Self-contact remains disabled.",
+            "pairs_tested": 53,
+            "partial": false
+          },
+          {
+            "id": "motors",
+            "level": "pass",
+            "message": "All 81 controls responded to small positive and negative commands in zero gravity.",
+            "responses": [
+              {
+                "name": "motor_bone_001_0",
+                "peak_response_speed": 5.730696042531675
+              },
+              {
+                "name": "motor_bone_001_1",
+                "peak_response_speed": 5.106345607379758
+              },
+              {
+                "name": "motor_bone_001_2",
+                "peak_response_speed": 6.914066083618463
+              },
+              {
+                "name": "motor_bone_002_0",
+                "peak_response_speed": 6.335107121791486
+              },
+              {
+                "name": "motor_bone_002_1",
+                "peak_response_speed": 5.984126095708467
+              },
+              {
+                "name": "motor_bone_002_2",
+                "peak_response_speed": 6.913058625822893
+              },
+              {
+                "name": "motor_bone_003_0",
+                "peak_response_speed": 6.167758173503481
+              },
+              {
+                "name": "motor_bone_003_1",
+                "peak_response_speed": 5.314129639085321
+              },
+              {
+                "name": "motor_bone_003_2",
+                "peak_response_speed": 6.912431426034379
+              },
+              {
+                "name": "motor_bone_004_0",
+                "peak_response_speed": 6.075680856478458
+              },
+              {
+                "name": "motor_bone_004_1",
+                "peak_response_speed": 5.027971673446819
+              },
+              {
+                "name": "motor_bone_004_2",
+                "peak_response_speed": 6.964889678592943
+              },
+              {
+                "name": "motor_bone_005_0",
+                "peak_response_speed": 6.388195862768682
+              },
+              {
+                "name": "motor_bone_005_1",
+                "peak_response_speed": 6.320180383045308
+              },
+              {
+                "name": "motor_bone_005_2",
+                "peak_response_speed": 6.970262767074232
+              },
+              {
+                "name": "motor_bone_006_0",
+                "peak_response_speed": 8.80795898787755
+              },
+              {
+                "name": "motor_bone_006_1",
+                "peak_response_speed": 4.990085970240038
+              },
+              {
+                "name": "motor_bone_006_2",
+                "peak_response_speed": 5.902044818033575
+              },
+              {
+                "name": "motor_bone_007_0",
+                "peak_response_speed": 8.860150529150715
+              },
+              {
+                "name": "motor_bone_007_1",
+                "peak_response_speed": 6.079319686222566
+              },
+              {
+                "name": "motor_bone_007_2",
+                "peak_response_speed": 6.377418604744446
+              },
+              {
+                "name": "motor_bone_008_0",
+                "peak_response_speed": 8.966172232341805
+              },
+              {
+                "name": "motor_bone_008_1",
+                "peak_response_speed": 7.3670206859301945
+              },
+              {
+                "name": "motor_bone_008_2",
+                "peak_response_speed": 7.354413342571785
+              },
+              {
+                "name": "motor_bone_009_0",
+                "peak_response_speed": 8.991160660175638
+              },
+              {
+                "name": "motor_bone_009_1",
+                "peak_response_speed": 8.937608042473219
+              },
+              {
+                "name": "motor_bone_009_2",
+                "peak_response_speed": 8.935987801058317
+              },
+              {
+                "name": "motor_bone_010_0",
+                "peak_response_speed": 8.991456803766656
+              },
+              {
+                "name": "motor_bone_010_1",
+                "peak_response_speed": 8.966986662084885
+              },
+              {
+                "name": "motor_bone_010_2",
+                "peak_response_speed": 8.965270401917815
+              },
+              {
+                "name": "motor_bone_011_0",
+                "peak_response_speed": 8.991469286891679
+              },
+              {
+                "name": "motor_bone_011_1",
+                "peak_response_speed": 8.986896124476932
+              },
+              {
+                "name": "motor_bone_011_2",
+                "peak_response_speed": 8.985886753701951
+              },
+              {
+                "name": "motor_bone_012_0",
+                "peak_response_speed": 8.991418984027677
+              },
+              {
+                "name": "motor_bone_012_1",
+                "peak_response_speed": 8.992397650217896
+              },
+              {
+                "name": "motor_bone_012_2",
+                "peak_response_speed": 8.991994166924123
+              },
+              {
+                "name": "motor_bone_013_0",
+                "peak_response_speed": 8.804380525181184
+              },
+              {
+                "name": "motor_bone_013_1",
+                "peak_response_speed": 4.9920545308769615
+              },
+              {
+                "name": "motor_bone_013_2",
+                "peak_response_speed": 5.904957978986252
+              },
+              {
+                "name": "motor_bone_014_0",
+                "peak_response_speed": 8.857277077437534
+              },
+              {
+                "name": "motor_bone_014_1",
+                "peak_response_speed": 6.120240702651054
+              },
+              {
+                "name": "motor_bone_014_2",
+                "peak_response_speed": 6.414462995015999
+              },
+              {
+                "name": "motor_bone_015_0",
+                "peak_response_speed": 8.972924875513687
+              },
+              {
+                "name": "motor_bone_015_1",
+                "peak_response_speed": 7.520312606569625
+              },
+              {
+                "name": "motor_bone_015_2",
+                "peak_response_speed": 7.507732524328511
+              },
+              {
+                "name": "motor_bone_016_0",
+                "peak_response_speed": 8.992186041758458
+              },
+              {
+                "name": "motor_bone_016_1",
+                "peak_response_speed": 8.953779635167795
+              },
+              {
+                "name": "motor_bone_016_2",
+                "peak_response_speed": 8.953004304485845
+              },
+              {
+                "name": "motor_bone_017_0",
+                "peak_response_speed": 8.992341030140226
+              },
+              {
+                "name": "motor_bone_017_1",
+                "peak_response_speed": 8.980490562751422
+              },
+              {
+                "name": "motor_bone_017_2",
+                "peak_response_speed": 8.979798025177654
+              },
+              {
+                "name": "motor_bone_018_0",
+                "peak_response_speed": 8.992351021833144
+              },
+              {
+                "name": "motor_bone_018_1",
+                "peak_response_speed": 8.989015471415078
+              },
+              {
+                "name": "motor_bone_018_2",
+                "peak_response_speed": 8.988585496470499
+              },
+              {
+                "name": "motor_bone_019_0",
+                "peak_response_speed": 8.992360767252892
+              },
+              {
+                "name": "motor_bone_019_1",
+                "peak_response_speed": 8.992620893695683
+              },
+              {
+                "name": "motor_bone_019_2",
+                "peak_response_speed": 8.992413518813304
+              },
+              {
+                "name": "motor_bone_020_0",
+                "peak_response_speed": 4.013068828888114
+              },
+              {
+                "name": "motor_bone_020_1",
+                "peak_response_speed": 2.9336038240995723
+              },
+              {
+                "name": "motor_bone_020_2",
+                "peak_response_speed": 7.5761031468824065
+              },
+              {
+                "name": "motor_bone_021_0",
+                "peak_response_speed": 4.667147964030033
+              },
+              {
+                "name": "motor_bone_021_1",
+                "peak_response_speed": 4.6789205129719935
+              },
+              {
+                "name": "motor_bone_021_2",
+                "peak_response_speed": 7.862081604286216
+              },
+              {
+                "name": "motor_bone_022_0",
+                "peak_response_speed": 7.573368320947604
+              },
+              {
+                "name": "motor_bone_022_1",
+                "peak_response_speed": 8.391783801320788
+              },
+              {
+                "name": "motor_bone_022_2",
+                "peak_response_speed": 8.174850350170102
+              },
+              {
+                "name": "motor_bone_023_0",
+                "peak_response_speed": 8.424087765807364
+              },
+              {
+                "name": "motor_bone_023_1",
+                "peak_response_speed": 8.518008893495974
+              },
+              {
+                "name": "motor_bone_023_2",
+                "peak_response_speed": 8.722896342549184
+              },
+              {
+                "name": "motor_bone_024_0",
+                "peak_response_speed": 4.0257913520908275
+              },
+              {
+                "name": "motor_bone_024_1",
+                "peak_response_speed": 2.937493897423369
+              },
+              {
+                "name": "motor_bone_024_2",
+                "peak_response_speed": 7.591672262525806
+              },
+              {
+                "name": "motor_bone_025_0",
+                "peak_response_speed": 4.657103514515763
+              },
+              {
+                "name": "motor_bone_025_1",
+                "peak_response_speed": 4.65929791593663
+              },
+              {
+                "name": "motor_bone_025_2",
+                "peak_response_speed": 7.830101555131019
+              },
+              {
+                "name": "motor_bone_026_0",
+                "peak_response_speed": 7.517792979289787
+              },
+              {
+                "name": "motor_bone_026_1",
+                "peak_response_speed": 8.297946666991294
+              },
+              {
+                "name": "motor_bone_026_2",
+                "peak_response_speed": 8.122401292034152
+              },
+              {
+                "name": "motor_bone_027_0",
+                "peak_response_speed": 8.143644992878254
+              },
+              {
+                "name": "motor_bone_027_1",
+                "peak_response_speed": 8.42633740121757
+              },
+              {
+                "name": "motor_bone_027_2",
+                "peak_response_speed": 8.545458978641985
+              }
+            ]
+          },
+          {
+            "id": "simulation",
+            "level": "pass",
+            "message": "Two seconds completed with finite physics states and no simulation resets.",
+            "max_joint_speed": 13.15968956696586
+          },
+          {
+            "id": "support",
+            "level": "info",
+            "message": "The body falls without a learned controller. This alone is not a setup failure.",
+            "fell": true,
+            "initial_height": 1.04348671,
+            "final_height": 0.12688053697427987
+          },
+          {
+            "id": "assumptions",
+            "level": "info",
+            "message": "Joint limits, mass distribution and motor strength are estimates. SkinTokens predicts an animation skeleton; it does not measure anatomy or guarantee locomotion."
+          }
+        ],
+        "scope": "Rest pose, collision geometry, motor response and two seconds without a learned controller. Does not certify walking, anatomy or physical accuracy."
+      },
+      "parts": 28,
+      "controls": 81,
+      "source": "Original procedural mesh; scripts/make-rig-test-inputs.py"
+    },
+    {
+      "name": "hexapod",
+      "file": "auto-rig-hexapod.glb",
+      "sha256": "35770b1f6ebded45f5dc7cec2d2286307de302394de12c3f971269648776ebea",
+      "generation_seconds": 37.24340659903828,
+      "fidelity": {
+        "format": "rlsim-rig-fidelity-v1",
+        "source_sha256": "cdc3b9c847497ef7e5da3f6e97c20c6c16a00aedba4f8320c557208d02f45bee",
+        "prediction_sha256": "a586944f66a37d86e946f283b57a7b2944d88f50fabb626baec295a49b647062",
+        "original_geometry_preserved": true,
+        "original_materials_preserved": true,
+        "original_vertices": 17292,
+        "joints": 14,
+        "max_surface_error": 0.0,
+        "surface_tolerance": 0.00019851256597146837,
+        "weight_transfer": "nearest coincident rest vertex",
+        "skeleton_review": {
+          "method": "near-symmetric surface / mirrored joint proximity",
+          "findings": [],
+          "scope": "Flags some missing branches. Does not verify limb count, anatomy or intended joint limits."
+        },
+        "note": "Preserves rest geometry and materials; predicted deformation and physics still need review."
+      },
+      "physics": {
+        "format": "rlsim-physics-checks-v1",
+        "status": "review",
+        "checks": [
+          {
+            "id": "structure",
+            "level": "pass",
+            "message": "Connected physics model compiled: 14 parts, 14 joints, 39 controls."
+          },
+          {
+            "id": "joint-assumptions",
+            "level": "warning",
+            "message": "Using a generic skeleton. Joint axes and limits need review; unnamed bones do not identify knees, ankles or other anatomical constraints."
+          },
+          {
+            "id": "mass",
+            "level": "pass",
+            "message": "Mass distribution is finite (10.00 kg total).",
+            "total_mass": 10,
+            "mass_ratio": 159.3966595589682
+          },
+          {
+            "id": "floor",
+            "level": "pass",
+            "message": "The rest pose has no deep floor penetration.",
+            "penetration_m": 0
+          },
+          {
+            "id": "overlaps",
+            "level": "pass",
+            "message": "No deep overlaps found between non-neighbor collision shapes.",
+            "pairs_tested": 29,
+            "partial": false
+          },
+          {
+            "id": "motors",
+            "level": "pass",
+            "message": "All 39 controls responded to small positive and negative commands in zero gravity.",
+            "responses": [
+              {
+                "name": "motor_bone_001_0",
+                "peak_response_speed": 8.992868834987192
+              },
+              {
+                "name": "motor_bone_001_1",
+                "peak_response_speed": 8.992869119166262
+              },
+              {
+                "name": "motor_bone_001_2",
+                "peak_response_speed": 8.992868908490896
+              },
+              {
+                "name": "motor_bone_002_0",
+                "peak_response_speed": 7.418057782820689
+              },
+              {
+                "name": "motor_bone_002_1",
+                "peak_response_speed": 5.351260412175927
+              },
+              {
+                "name": "motor_bone_002_2",
+                "peak_response_speed": 5.836751202016583
+              },
+              {
+                "name": "motor_bone_003_0",
+                "peak_response_speed": 8.193263227638012
+              },
+              {
+                "name": "motor_bone_003_1",
+                "peak_response_speed": 7.798858726168045
+              },
+              {
+                "name": "motor_bone_003_2",
+                "peak_response_speed": 8.515834373578464
+              },
+              {
+                "name": "motor_bone_004_0",
+                "peak_response_speed": 7.900116848619137
+              },
+              {
+                "name": "motor_bone_004_1",
+                "peak_response_speed": 5.589111215205829
+              },
+              {
+                "name": "motor_bone_004_2",
+                "peak_response_speed": 6.533548466046756
+              },
+              {
+                "name": "motor_bone_005_0",
+                "peak_response_speed": 8.436333420264027
+              },
+              {
+                "name": "motor_bone_005_1",
+                "peak_response_speed": 8.071976622011194
+              },
+              {
+                "name": "motor_bone_005_2",
+                "peak_response_speed": 8.713406005772132
+              },
+              {
+                "name": "motor_bone_006_0",
+                "peak_response_speed": 7.499214307648888
+              },
+              {
+                "name": "motor_bone_006_1",
+                "peak_response_speed": 5.46464545828664
+              },
+              {
+                "name": "motor_bone_006_2",
+                "peak_response_speed": 5.793012535880182
+              },
+              {
+                "name": "motor_bone_007_0",
+                "peak_response_speed": 8.219274934314871
+              },
+              {
+                "name": "motor_bone_007_1",
+                "peak_response_speed": 7.8138511730828135
+              },
+              {
+                "name": "motor_bone_007_2",
+                "peak_response_speed": 8.530362074597978
+              },
+              {
+                "name": "motor_bone_008_0",
+                "peak_response_speed": 7.40664440825371
+              },
+              {
+                "name": "motor_bone_008_1",
+                "peak_response_speed": 5.383275350003327
+              },
+              {
+                "name": "motor_bone_008_2",
+                "peak_response_speed": 5.88205284899111
+              },
+              {
+                "name": "motor_bone_009_0",
+                "peak_response_speed": 8.190379956911773
+              },
+              {
+                "name": "motor_bone_009_1",
+                "peak_response_speed": 7.795674778039601
+              },
+              {
+                "name": "motor_bone_009_2",
+                "peak_response_speed": 8.51714273212972
+              },
+              {
+                "name": "motor_bone_010_0",
+                "peak_response_speed": 7.900411656222895
+              },
+              {
+                "name": "motor_bone_010_1",
+                "peak_response_speed": 5.546641149660292
+              },
+              {
+                "name": "motor_bone_010_2",
+                "peak_response_speed": 6.4883529904804895
+              },
+              {
+                "name": "motor_bone_011_0",
+                "peak_response_speed": 8.43583747657826
+              },
+              {
+                "name": "motor_bone_011_1",
+                "peak_response_speed": 8.097351714588253
+              },
+              {
+                "name": "motor_bone_011_2",
+                "peak_response_speed": 8.730454517648262
+              },
+              {
+                "name": "motor_bone_012_0",
+                "peak_response_speed": 7.478805133893886
+              },
+              {
+                "name": "motor_bone_012_1",
+                "peak_response_speed": 5.518257426142254
+              },
+              {
+                "name": "motor_bone_012_2",
+                "peak_response_speed": 5.879112256185458
+              },
+              {
+                "name": "motor_bone_013_0",
+                "peak_response_speed": 8.210293772739067
+              },
+              {
+                "name": "motor_bone_013_1",
+                "peak_response_speed": 7.830889240692992
+              },
+              {
+                "name": "motor_bone_013_2",
+                "peak_response_speed": 8.559572560899763
+              }
+            ]
+          },
+          {
+            "id": "simulation",
+            "level": "pass",
+            "message": "Two seconds completed with finite physics states and no simulation resets.",
+            "max_joint_speed": 1.157953281640456
+          },
+          {
+            "id": "support",
+            "level": "info",
+            "message": "The body falls without a learned controller. This alone is not a setup failure.",
+            "fell": true,
+            "initial_height": 0.482617523,
+            "final_height": 0.05788689840844993
+          },
+          {
+            "id": "assumptions",
+            "level": "info",
+            "message": "Joint limits, mass distribution and motor strength are estimates. SkinTokens predicts an animation skeleton; it does not measure anatomy or guarantee locomotion."
+          }
+        ],
+        "scope": "Rest pose, collision geometry, motor response and two seconds without a learned controller. Does not certify walking, anatomy or physical accuracy."
+      },
+      "parts": 14,
+      "controls": 39,
+      "source": "Original procedural mesh; scripts/make-rig-test-inputs.py"
+    }
+  ],
+  "limits": [
+    "Three inputs, not a general success-rate benchmark.",
+    "Generic animation bones do not establish anatomical joint constraints.",
+    "Mass, torque and collisions are estimates; self-contact is disabled.",
+    "Shape preservation does not prove correct skin deformation or limb count.",
+    "The crawler required a second stochastic prediction."
+  ],
+  "first_crawler_attempt": {
+    "joints": 12,
+    "seconds": 45.81545956595801,
+    "fidelity": {
+      "format": "rlsim-rig-fidelity-v1",
+      "source_sha256": "cdc3b9c847497ef7e5da3f6e97c20c6c16a00aedba4f8320c557208d02f45bee",
+      "prediction_sha256": "6f4f41dcb26abe37c5b83587221412883a98baba0c605f169f6f3ac6996b9bd9",
+      "original_geometry_preserved": true,
+      "original_materials_preserved": true,
+      "original_vertices": 17292,
+      "joints": 12,
+      "max_surface_error": 0.0,
+      "surface_tolerance": 0.00019851256597146837,
+      "weight_transfer": "nearest coincident rest vertex",
+      "note": "Preserves rest geometry and materials; predicted deformation and physics still need review.",
+      "skeleton_review": {
+        "method": "near-symmetric surface / mirrored joint proximity",
+        "findings": [
+          {
+            "axis": "X",
+            "unmatched_joints": [
+              "bone_8",
+              "bone_9"
+            ],
+            "message": "The mesh is nearly symmetric across X, but some predicted joints have no nearby counterpart. A limb branch may be missing; inspect or regenerate the rig."
+          }
+        ],
+        "scope": "Flags some missing branches. Does not verify limb count, anatomy or intended joint limits."
+      }
+    },
+    "finding": "One rear leg branch missing; retained as a failed topology example. Selected a second prediction with six leg chains."
+  }
+}

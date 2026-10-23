@@ -1,0 +1,14 @@
+<mujoco model="Actuated pendulum">
+  <compiler angle="radian"/>
+  <option timestep="0.004" gravity="0 0 -9.81"/>
+  <worldbody>
+    <body name="pendulum" pos="0 0 1.5">
+      <joint name="pivot" type="hinge" axis="0 1 0" range="-1.8 1.8" damping="0.25"/>
+      <geom type="capsule" fromto="0 0 0 0 0 -0.7" size="0.05" mass="1"/>
+    </body>
+  </worldbody>
+  <actuator>
+    <motor name="pendulum_motor" joint="pivot" gear="12" ctrllimited="true" ctrlrange="-0.4 0.8"/>
+  </actuator>
+  <keyframe><key name="initial" qpos="0.2"/></keyframe>
+</mujoco>

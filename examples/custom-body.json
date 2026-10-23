@@ -1,0 +1,19 @@
+{
+  "format": "rlsim-body-v1",
+  "body": {
+    "name": "Long-legged quadruped",
+    "legs": 4,
+    "torso_length": 0.95,
+    "torso_radius": 0.14,
+    "upper_length": 0.53,
+    "lower_length": 0.48,
+    "leg_radius": 0.055,
+    "body_mass": 5.0,
+    "motor_strength": 75.0,
+    "joint_damping": 1.8
+  },
+  "environment": {
+    "gravity": 9.81,
+    "friction": 0.9
+  }
+}

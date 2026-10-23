@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#f5f5f3" />
+    <title>RLsim</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./camera-follow.js" defer></script>
+    <script src="./vendor/scene.js" defer></script>
+    <script src="./renderer.js" defer></script>
+    <script src="./browser-client.js" defer></script>
+    <script src="./rig-workflow.js" defer></script>
+    <script src="./app.js" defer></script>
+    <script src="./explore.js" defer></script>
+    <script src="./generalization.js" defer></script>
+  </head>
+  <body>
+    <header class="app-toolbar">
+      <h1>RLsim</h1>
+      <label class="engine-control" for="execution-engine">
+        <span class="sr-only">Run training and inference on</span>
+        <select id="execution-engine">
+          <option value="browser">This device</option>
+          <option value="server">Server</option>
+        </select>
+      </label>
+      <span id="hardware-label">Connecting…</span>
+      <span id="status-text" role="status" aria-live="polite"></span>
+    </header>
+
+    <main class="workspace">
+      <aside class="controls" aria-label="Body, environment and model controls">
+        <div class="tabs" role="tablist" aria-label="Controls">
+          <button id="body-tab" type="button" role="tab" data-tab="body" aria-selected="true" aria-controls="body-panel">Body</button>
+          <button id="train-tab" type="button" role="tab" data-tab="train" aria-selected="false" aria-controls="train-panel" tabindex="-1">Train</button>
+          <button id="run-tab" type="button" role="tab" data-tab="run" aria-selected="false" aria-controls="run-panel" tabindex="-1">Model</button>
+          <button id="explore-tab" type="button" role="tab" data-tab="explore" aria-selected="false" aria-controls="explore-panel" tabindex="-1">Explore</button>
+        </div>
+
+        <div class="control-content">
+          <section id="explore-panel" class="tab-panel" role="tabpanel" aria-labelledby="explore-tab" hidden>
+            <h2>One policy, different proportions</h2>
+            <p class="control-hint">Change the quadruped's lengths and replay the same frozen controller. Each change starts a fresh episode; no training runs.</p>
+            <div id="generalization-demo" aria-busy="true">
+              <p id="generalization-loading" class="control-hint" role="status">Loading the proportion experiment…</p>
+              <div id="generalization-controls" hidden>
+                <div class="field"><label for="generalization-policy">Controller</label><select id="generalization-policy"><option value="varied">Trained on varied bodies</option><option value="fixed">Trained on one body</option></select></div>
+                <div class="proportion-field"><label for="proportion-torso">Torso length</label><input id="proportion-torso" type="range" min="0.6" max="1.4" step="0.01" value="1"/><output for="proportion-torso" id="proportion-torso-value">100%</output></div>
+                <div class="proportion-field"><label for="proportion-upper">Upper-leg length</label><input id="proportion-upper" type="range" min="0.6" max="1.4" step="0.01" value="1"/><output for="proportion-upper" id="proportion-upper-value">100%</output></div>
+                <div class="proportion-field"><label for="proportion-lower">Lower-leg length</label><input id="proportion-lower" type="range" min="0.6" max="1.4" step="0.01" value="1"/><output for="proportion-lower" id="proportion-lower-value">100%</output></div>
+                <div id="generalization-speed-field" class="proportion-field" hidden><label for="generalization-speed">Walking speed</label><input id="generalization-speed" type="range" min="0.5" max="1.5" step="0.05" value="1"/><output for="generalization-speed" id="generalization-speed-value">1.00 m/s</output></div>
+                <p id="proportion-region" class="control-hint"></p>
+                <div class="proportion-presets"><button type="button" data-proportions="1,1,1">Original</button><button type="button" data-proportions=".96,1.16,1.18">Long legs</button><button type="button" data-proportions="1,1.16,.84">Withheld shape</button><button type="button" data-proportions="1,1.35,1.3">Outside range</button></div>
+                <button type="button" id="generalization-run" class="primary">Apply proportions &amp; replay</button>
+                <label class="checkbox-field"><input type="checkbox" id="generalization-auto" checked/>Replay when a slider is released</label>
+                <p id="generalization-result" class="control-hint" role="status"></p>
+                <p id="generalization-identity" class="control-hint"></p>
+                <details id="generalization-evidence"><summary>How well does it generalize?</summary><div id="generalization-evidence-content"></div><a href="./demos/generalization-report.json" download>Download all test results</a></details>
+                <p class="control-hint">Planar quadrupeds only, with the same eight joints. Mass, thickness and nominal torque stay fixed. This does not establish transfer to arbitrary meshes or different skeletons. <a href="./rig-help.html#body-generalization" target="_blank" rel="noopener">Experiment details ↗</a></p>
+              </div>
+            </div>
+            <h2>Demo gallery</h2>
+            <p class="control-hint">Pretrained controllers running live physics on your device. No training wait. These examples use planar bodies.</p>
+            <p id="gallery-status" class="control-hint" role="status">Loading examples…</p>
+            <div id="demo-gallery"></div>
+            <h2>Experiment comparisons</h2>
+            <p class="control-hint">A fixed-budget curriculum pilot across three bodies and five training seeds. Results include unsuccessful trials.</p>
+            <div id="published-comparison"></div>
+            <a href="./demos/comparison.json" download>Download experiment data</a>
+            <details id="compare-models"><summary>Compare your models</summary>
+              <p class="control-hint">Select 2–6 saved models. Each is evaluated on the same three fresh seeds and its original task. Different tasks, bodies or training budgets are flagged.</p>
+              <div id="comparison-models"></div>
+              <button id="run-comparison" type="button">Evaluate selected models</button>
+              <button id="stop-comparison" type="button" hidden>Stop comparison</button>
+              <p id="comparison-status" class="control-hint" role="status"></p>
+              <div id="comparison-results"></div>
+              <button id="export-comparison" type="button" hidden>Download comparison</button>
+            </details>
+          </section>
+          <section id="body-panel" class="tab-panel" role="tabpanel" aria-labelledby="body-tab">
+            <div class="field preset-field">
+              <label for="body-preset">Body</label>
+              <select id="body-preset">
+                <option value="biped">Biped</option>
+                <option value="quadruped" selected>Quadruped</option>
+                <option value="hexapod">Hexapod</option>
+              </select>
+            </div>
+            <div class="field body-name-field">
+              <label for="body-name">Name</label>
+              <input id="body-name" type="text" maxlength="60" pattern=".*\S.*" value="Quadruped" required />
+            </div>
+            <fieldset id="body-dimensions">
+              <legend>Dimensions</legend>
+              <div class="field">
+                <label for="torso-length">Torso length</label>
+                <div class="measurement"><input id="torso-length" data-field="torso_length" type="number" min="0.3" max="1.8" step="0.01" value="0.8" /><span>m</span></div>
+              </div>
+              <div class="field">
+                <label for="torso-radius">Torso radius</label>
+                <div class="measurement"><input id="torso-radius" data-field="torso_radius" type="number" min="0.07" max="0.3" step="0.01" value="0.14" /><span>m</span></div>
+              </div>
+              <div class="field">
+                <label for="upper-length">Upper leg</label>
+                <div class="measurement"><input id="upper-length" data-field="upper_length" type="number" min="0.18" max="0.9" step="0.01" value="0.42" /><span>m</span></div>
+              </div>
+              <div class="field">
+                <label for="lower-length">Lower leg</label>
+                <div class="measurement"><input id="lower-length" data-field="lower_length" type="number" min="0.18" max="0.9" step="0.01" value="0.42" /><span>m</span></div>
+              </div>
+              <div class="field">
+                <label for="leg-radius">Leg radius</label>
+                <div class="measurement"><input id="leg-radius" data-field="leg_radius" type="number" min="0.025" max="0.1" step="0.005" value="0.055" /><span>m</span></div>
+              </div>
+            </fieldset>
+            <fieldset id="body-mechanics">
+              <legend>Mechanics</legend>
+              <div class="field">
+                <label for="body-mass">Total mass</label>
+                <div class="measurement"><input id="body-mass" data-field="body_mass" type="number" min="1" max="20" step="0.1" value="4" /><span>kg</span></div>
+              </div>
+              <div class="field">
+                <label for="motor-strength">Motor torque</label>
+                <div class="measurement"><input id="motor-strength" data-field="motor_strength" type="number" min="5" max="150" step="1" value="60" /><span>N·m</span></div>
+              </div>
+              <div class="field">
+                <label for="joint-damping">Joint damping</label>
+                <div class="measurement"><input id="joint-damping" data-field="joint_damping" type="number" min="0.1" max="5" step="0.1" value="1.5" /><span class="long-unit" title="Newton-metre seconds per radian">N·m·s/rad</span></div>
+              </div>
+            </fieldset>
+            <section id="imported-body-info" class="imported-body-info" aria-label="Imported model" hidden>
+              <p id="body-source" class="control-hint"></p>
+              <dl class="metrics">
+                <div><dt>Bodies</dt><dd id="body-count">—</dd></div>
+                <div><dt>Joints</dt><dd id="joint-count">—</dd></div>
+                <div><dt>Motor controls</dt><dd id="actuator-count">—</dd></div>
+                <div><dt>Observations</dt><dd id="observation-count">—</dd></div>
+              </dl>
+              <label class="checkbox-field collider-option"><input id="show-colliders" type="checkbox" />Show colliders</label>
+              <p id="import-warnings" class="control-hint" role="status" hidden></p>
+              <section id="rig-check-panel" aria-label="Physics checks" hidden>
+                <p id="rig-check-summary" class="control-hint" role="status">Physics checks have not run.</p>
+                <button id="run-rig-checks" type="button" class="full-width">Check physics</button>
+                <details id="rig-check-details" class="reward-reference" hidden><summary>Check results</summary><ul id="rig-check-list" class="rig-notes"></ul></details>
+                <p class="control-hint">Checks joints, collisions and motor response. Passing does not mean the body has learned to walk.</p>
+              </section>
+              <section id="physical-rig-report" hidden aria-label="Generated physics">
+                <p id="rig-summary" class="control-hint"></p>
+                <p class="control-hint">Mass, strength and joint limits are estimates. Check colliders and joints before training; learned walking is not guaranteed.</p>
+                <details id="rig-findings" class="reward-reference" hidden>
+                  <summary>Conversion notes</summary>
+                  <ul id="rig-findings-list" class="rig-notes"></ul>
+                </details>
+                <details id="locomotion-setup" class="advanced-training" hidden>
+                  <summary>Locomotion setup</summary>
+                  <div class="advanced-fields">
+                    <p class="control-hint">Lock fingers and choose starting joint strengths for a humanoid. The mesh and rest pose stay intact.</p>
+                    <div class="field"><label for="locomotion-mass">Total mass (kg)</label><input id="locomotion-mass" type="number" min="0.1" max="500" step="any" value="10" required /></div>
+                    <p class="control-hint">Choose the weight you intend to simulate. For example, 60 kg for an adult; a mesh cannot measure body weight.</p>
+                    <div class="field"><label for="locomotion-strength">Strength multiplier</label><input id="locomotion-strength" type="number" min="0.25" max="2" step="any" value="1" required /></div>
+                    <label class="checkbox-field"><input id="locomotion-lock-fingers" type="checkbox" checked />Lock finger joints</label>
+                    <button id="recommend-locomotion" type="button" class="full-width">Review physics setup</button>
+                    <p id="locomotion-status" class="control-hint" role="status">Suggestions are a starting point for testing.</p>
+                    <div id="locomotion-review" hidden>
+                      <p id="locomotion-summary" class="control-hint"></p>
+                      <table class="advice-table">
+                        <thead><tr><th scope="col">Setting</th><th scope="col">Before</th><th scope="col">After</th></tr></thead>
+                        <tbody id="locomotion-metrics"></tbody>
+                      </table>
+                      <details class="reward-reference"><summary>Joint changes</summary><ul id="locomotion-changes" class="rig-notes"></ul></details>
+                      <ul id="locomotion-warnings" class="rig-notes"></ul>
+                      <div class="body-file-actions">
+                        <button id="apply-locomotion" type="button">Apply setup</button>
+                        <button id="undo-locomotion" type="button" hidden>Undo setup</button>
+                      </div>
+                    </div>
+                    <p class="control-hint advice-help">Applying changes requires a new controller. Then use Train → Recommend settings. <a href="./rig-help.html#locomotion" target="_blank" rel="noopener">How to tune and compare trials ↗</a></p>
+                  </div>
+                </details>
+                <details id="physical-rig-editor" class="advanced-training">
+                  <summary>Advanced physics</summary>
+                  <div class="advanced-fields">
+                    <div class="field"><label for="rig-control-mode">Control mode</label><select id="rig-control-mode"><option value="torque">Direct torque</option><option value="joint_target">Joint targets (PD)</option></select></div>
+                    <p class="control-hint">Joint targets add bounded position feedback to powered joints. This changes action meanings and requires new training; the visual model stays the same.</p>
+                    <div id="rig-servo-fields" hidden>
+                      <div class="field"><label for="rig-target-excursion">Target excursion (°)</label><input id="rig-target-excursion" type="number" min="1" max="85" step="any" value="30" required /></div>
+                      <div class="field"><label for="rig-servo-stiffness">Stiffness scale</label><input id="rig-servo-stiffness" type="number" min="0.1" max="3" step="any" value="1" required /></div>
+                      <div class="field"><label for="rig-servo-damping">Servo damping ratio</label><input id="rig-servo-damping" type="number" min="0.1" max="2" step="any" value="0.7" required /></div>
+                      <p class="control-hint">Zero action holds the rest orientation or nearest allowed hinge angle. Existing torque limits still bound output; for ball servos the limit is total torque magnitude. <a href="./rig-help.html#joint-targets" target="_blank" rel="noopener">Control details ↗</a></p>
+                    </div>
+                    <p class="control-hint">Edit one body part; Apply validates and previews the rig. The original mesh and skin weights are retained.</p>
+                    <div class="field"><label for="rig-body">Body part</label><select id="rig-body"></select></div>
+                    <div class="field"><label for="rig-parent">Connected to</label><select id="rig-parent"></select></div>
+                    <div class="field"><label for="rig-mass">Mass (kg)</label><input id="rig-mass" type="number" min="0.000001" max="10000" step="any" required /></div>
+                    <div class="field"><label for="rig-joint">Joint</label><select id="rig-joint"><option value="free">Free root</option><option value="fixed">Fixed</option><option value="ball">Ball</option><option value="hinge">Hinge</option></select></div>
+                    <p class="control-hint">Fixed locks this part to its parent in the rest pose. A torque of 0 only disables the motor; the joint can still move.</p>
+                    <div id="rig-joint-fields">
+                      <div class="field"><label for="rig-limit-min">Minimum (°)</label><input id="rig-limit-min" type="number" min="-180" max="180" step="any" required /></div>
+                      <div class="field"><label for="rig-limit-max">Maximum (°)</label><input id="rig-limit-max" type="number" min="-180" max="180" step="any" required /></div>
+                      <div class="field" title="Set to 0 to disable this joint's motor."><label for="rig-torque">Torque (N·m)</label><input id="rig-torque" type="number" min="0" max="10000" step="any" required /></div>
+                      <div class="field"><label for="rig-damping">Damping</label><input id="rig-damping" type="number" min="0" max="1000" step="any" required /></div>
+                      <div id="rig-axis-fields" class="rig-axis-fields">
+                        <span class="standalone-label">Hinge axis · body coordinates</span>
+                        <div class="rig-vector">
+                          <label for="rig-axis-x">X<input id="rig-axis-x" type="number" min="-1" max="1" step="any" required /></label>
+                          <label for="rig-axis-y">Y<input id="rig-axis-y" type="number" min="-1" max="1" step="any" required /></label>
+                          <label for="rig-axis-z">Z<input id="rig-axis-z" type="number" min="-1" max="1" step="any" required /></label>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="rig-collider-fields"></div>
+                    <p id="rig-draft-message" class="control-hint" role="status">No unapplied changes.</p>
+                    <div class="body-file-actions">
+                      <button id="apply-physical-rig" type="button" disabled>Apply physics</button>
+                      <button id="discard-physical-rig" type="button" disabled>Discard edits</button>
+                    </div>
+                    <p class="control-hint import-help">Changing physics needs a new controller. Saved models keep their original bodies. Export body JSON to retain your edits.</p>
+                  </div>
+                </details>
+              </section>
+              <p id="authored-physics-note" class="control-hint" hidden>Authored physics is retained. Edit joints, masses and collision shapes in the source MJCF or URDF and reimport.</p>
+              <p id="legacy-physics-note" class="control-hint" hidden>This body was saved with an earlier converter. Reimport its original model file to create an editable physics rig. Existing checkpoints retain their saved bodies.</p>
+            </section>
+            <div class="body-actions">
+              <button id="reset-design" type="button">Reset body</button>
+              <button id="baseline-button" type="button" disabled>Simulate without control</button>
+            </div>
+            <div class="body-file-actions">
+              <button id="import-body" type="button" disabled>Import body JSON</button>
+              <button id="export-body" type="button" disabled>Export body JSON</button>
+              <input id="body-file" type="file" accept=".json,application/json" hidden />
+            </div>
+            <details id="body-import" class="advanced-training">
+              <summary>Import model files</summary>
+              <div class="advanced-fields">
+                <div class="body-file-actions">
+                  <button id="choose-body-files" type="button">Choose files</button>
+                  <button id="choose-body-folder" type="button">Choose folder</button>
+                </div>
+                <p class="control-hint import-help">MJCF, URDF, GLB, glTF, FBX, OBJ or STL. Include linked assets, or choose a ZIP archive.</p>
+                <input id="asset-files" type="file" multiple accept=".xml,.mjcf,.urdf,.zip,.mjz,.glb,.gltf,.fbx,.obj,.mtl,.stl,.bin,.png,.jpg,.jpeg,.webp,.bmp,.tga" hidden />
+                <input id="asset-folder" type="file" multiple webkitdirectory directory hidden />
+                <div id="body-import-options" hidden>
+                  <div class="field"><label for="import-entry">Model file</label><select id="import-entry"></select></div>
+                  <div class="field" title="Scale applied when converting visual assets into a physics body.">
+                    <label for="import-scale">Scale</label><input id="import-scale" type="number" min="0.001" max="1000" step="any" value="1" required />
+                  </div>
+                  <div class="field" title="Total mass assigned to converted visual assets.">
+                    <label for="import-mass">Mass (kg)</label><input id="import-mass" type="number" min="0.01" max="10000" step="any" value="10" required />
+                  </div>
+                  <div class="field" title="Torque limit for generated motors. Authored actuator settings are retained."><label for="import-motor-strength">Motor torque</label><input id="import-motor-strength" type="number" min="0.1" max="10000" step="any" value="60" required /></div>
+                  <div class="field" title="Use an available skeleton for articulated motion, or import the asset as one rigid body.">
+                    <label for="import-rig">Rig</label><select id="import-rig"><option value="auto">Auto</option><option value="skeleton">Skeleton</option><option value="rigid">Rigid body</option></select>
+                  </div>
+                  <div class="field" title="Auto recognizes a humanoid when possible; Generic follows the existing skeleton. Review inferred connections in Advanced physics.">
+                    <label for="import-profile">Body structure</label><select id="import-profile"><option value="auto">Auto</option><option value="humanoid">Humanoid</option><option value="generic">Generic skeleton</option></select>
+                  </div>
+                  <div class="checkbox-fields">
+                    <label class="checkbox-field" title="Allow the root to move freely in 3D."><input id="import-floating-base" type="checkbox" />Floating base</label>
+                    <label class="checkbox-field" title="Generate motors only when the model has no actuators. Authored actuators are retained."><input id="import-auto-actuators" type="checkbox" checked />Generate actuators if none</label>
+                    <label class="checkbox-field"><input id="import-add-floor" type="checkbox" checked />Add floor</label>
+                  </div>
+                  <button id="apply-body-import" type="button" class="full-width">Import body</button>
+                  <button id="prepare-import-rig" type="button" class="full-width" hidden>Generate a rig with SkinTokens…</button>
+                </div>
+              </div>
+            </details>
+            <details id="optional-rigging" class="advanced-training">
+              <summary>Optional AI rigging</summary>
+              <div class="advanced-fields">
+                <p class="control-hint">For meshes without a usable skeleton, SkinTokens / TokenRig can prepare a rigged GLB with a separately installed local helper. Existing skeletons do not need this step.</p>
+                <p class="control-hint">Requires an NVIDIA GPU with at least 14 GB VRAM. This optional preparation does not run in the browser; browser training still uses the available GPU or CPU.</p>
+                <p class="control-hint">Choose a self-contained GLB without a skeleton. Your local RLsim server prepares the rig. Original geometry and materials are retained; inferred bones and physics remain editable.</p>
+                <label for="auto-rig-file">Model to rig (.glb)</label><input id="auto-rig-file" type="file" accept=".glb" />
+                <p id="auto-rig-selected" class="control-hint" hidden></p>
+                <button id="check-rig-service" type="button" class="full-width">Check local SkinTokens setup</button>
+                <p id="auto-rig-status" class="control-hint" role="status">Optional local preparation. Static hosting can import a GLB prepared elsewhere.</p>
+                <button id="start-auto-rig" type="button" class="full-width" disabled>Generate rig</button>
+                <button id="cancel-auto-rig" type="button" class="full-width" hidden>Cancel preparation</button>
+                <div id="auto-rig-result" hidden>
+                  <p id="auto-rig-fidelity" class="control-hint"></p>
+                  <button id="use-auto-rig" type="button" class="full-width">Review body settings</button>
+                  <button id="download-auto-rig" type="button" class="full-width">Save rigged GLB</button>
+                </div>
+                <p class="control-hint">Prepared examples · generated with SkinTokens. No walking controller included.</p>
+                <label for="rig-example">Example body</label><select id="rig-example"><option value="humanoid">Humanoid</option><option value="giraffe">Giraffe</option><option value="hexapod">Six-legged crawler</option></select>
+                <button id="load-rig-example" type="button" class="full-width">Review example body</button>
+                <p class="control-hint"><a href="./rig-help.html#skintokens" target="_blank" rel="noopener">Setup and import instructions ↗</a></p>
+              </div>
+            </details>
+            <p class="control-hint import-help"><a href="./rig-help.html" target="_blank" rel="noopener">Body import and physics guide ↗</a></p>
+          </section>
+
+          <section id="train-panel" class="tab-panel" role="tabpanel" aria-labelledby="train-tab" hidden>
+            <fieldset>
+              <legend>PPO training</legend>
+              <section class="training-advisor" aria-label="Body-aware training setup">
+                <button id="recommend-training" type="button" class="full-width">Recommend settings</button>
+                <p id="advice-status" class="control-hint">Starting settings for this body, objective and device.</p>
+                <details id="training-advice" hidden>
+                  <summary>Recommended starting setup</summary>
+                  <p id="advice-summary" class="control-hint"></p>
+                  <p class="control-hint">Heuristics, not a measured optimum. Review before applying.</p>
+                  <table class="advice-table">
+                    <thead><tr><th scope="col">Setting</th><th scope="col">Current</th><th scope="col">Suggested</th></tr></thead>
+                    <tbody id="advice-settings"></tbody>
+                  </table>
+                  <details class="reward-reference"><summary>Why these settings?</summary><ul id="advice-reasons" class="rig-notes"></ul></details>
+                  <ul id="advice-warnings" class="rig-notes"></ul>
+                  <div class="action-row">
+                    <button id="apply-advice" type="button">Apply settings</button>
+                    <button id="undo-advice" type="button" hidden>Undo</button>
+                  </div>
+                  <p class="control-hint advice-help">Applies to the next run. Your body, objective and seed stay the same. <a href="./rig-help.html#training-setup" target="_blank" rel="noopener">How recommendations work ↗</a></p>
+                </details>
+              </section>
+              <div class="field">
+                <label for="training-budget">Steps</label>
+                <input id="training-budget" type="number" min="4096" max="2000000" step="1" value="262144" />
+              </div>
+              <div class="field">
+                <label for="target-speed">Target speed</label>
+                <div class="measurement"><input id="target-speed" type="number" min="0.1" max="3" step="0.01" value="1" /><span>m/s</span></div>
+              </div>
+              <div class="field">
+                <label for="seed">Seed</label>
+                <input id="seed" type="number" min="0" max="2147483647" step="1" value="7" />
+              </div>
+              <div class="field">
+                <label for="n-envs">Parallel environments</label>
+                <input id="n-envs" type="number" min="1" max="32" step="1" value="8" />
+              </div>
+              <div class="checkbox-fields">
+                <label class="checkbox-field" title="Use the selected curriculum for new training."><input id="curriculum" type="checkbox" checked />Use curriculum</label>
+                <label class="checkbox-field" title="Vary mass, torque and friction between training episodes."><input id="randomize" type="checkbox" checked />Randomize physics</label>
+              </div>
+              <div class="field"><label for="curriculum-mode">Curriculum</label><select id="curriculum-mode"><option value="speed">Gradual speed</option><option value="staged">Balance → walking</option></select></div>
+              <p id="curriculum-help" class="control-hint">Balance → walking is for Velocity tasks. It advances after stable episodes, with gradually stronger physics randomization.</p>
+              <details id="task-settings" class="advanced-training">
+                <summary>Task</summary>
+                <div class="advanced-fields">
+                  <div class="field">
+                    <label for="task-preset">Objective</label>
+                    <select id="task-preset"><option value="velocity">Velocity</option><option value="walk">Coordinated walking (templates)</option><option value="balance">Balance</option><option value="target">Reach target</option><option value="custom">Custom reward</option></select>
+                  </div>
+                  <p id="walking-help" class="control-hint" hidden>Encourages every leg to lift and plant in alternating groups, with less slipping and body motion. Uses learned joint-position targets. Template bodies only; start a new run. <a href="./rig-help.html#coordinated-walking" target="_blank" rel="noopener">How it works ↗</a></p>
+                  <div id="walking-drift-field" class="field" hidden><label for="foot-drift-weight">Ground drift penalty</label><input id="foot-drift-weight" type="number" min="0" max="5" step="0.1" value="1" required title="Higher values discourage moving the feet along the ground. Excessive penalties can hinder learning." /></div>
+                  <div id="walking-effort-fields" hidden>
+                    <label class="checkbox-field walking-support"><input id="foot-only-support" type="checkbox" /> Count knee or torso contact as a fall</label>
+                    <div class="field"><label for="mechanical-work-weight">Motor work penalty</label><input id="mechanical-work-weight" type="number" min="0" max="2" step="0.05" value="0" required aria-describedby="motor-work-help" /></div>
+                    <p id="motor-work-help" class="control-hint">Optional. Start at 0; higher values discourage mechanical effort but can also discourage stepping. Measured from simulated motors, not battery use.</p>
+                  </div>
+                  <div class="field"><label for="episode-seconds">Episode (s)</label><input id="episode-seconds" type="number" min="1" max="120" step="any" value="20" required /></div>
+                  <div class="field" title="Body whose position and orientation define progress, balance and falling. Root body uses the model's default.">
+                    <label for="tracked-body">Tracked body</label><select id="tracked-body"><option value="">Root body</option></select>
+                  </div>
+                  <div id="task-target-fields" hidden>
+                    <div class="field"><label for="target-x">Target X (m)</label><input id="target-x" type="number" min="-1000" max="1000" step="any" value="2" required /></div>
+                    <div class="field"><label for="target-y">Target Y (m)</label><input id="target-y" type="number" min="-1000" max="1000" step="any" value="0" required /></div>
+                    <div class="field"><label for="target-z">Target Z (m)</label><input id="target-z" type="number" min="-1000" max="1000" step="any" value="0.8" required /></div>
+                  </div>
+                  <div class="checkbox-fields">
+                    <label class="checkbox-field"><input id="terminate-on-fall" type="checkbox" checked />End episode on fall</label>
+                  </div>
+                  <div class="field" title="Minimum tracked-body height as a fraction of its initial height.">
+                    <label for="min-height-ratio">Minimum height ratio</label><input id="min-height-ratio" type="number" min="0" max="1" step="any" value="0.35" required />
+                  </div>
+                  <div class="field" title="Maximum tracked-body tilt from upright before a fall is detected.">
+                    <label for="max-tilt">Maximum tilt (°)</label><input id="max-tilt" type="number" min="0" max="180" step="any" value="64" required />
+                  </div>
+                  <div id="custom-reward-field" hidden>
+                    <label class="standalone-label" for="reward-expression">Reward expression</label>
+                    <textarea id="reward-expression" rows="5" maxlength="2000" spellcheck="false" required aria-describedby="reward-variables">1.5*speed_tracking + 0.3*forward_progress + 0.15*alive + 0.15*upright + 0.04*energy + 0.02*smoothness + fall</textarea>
+                    <details class="reward-reference">
+                      <summary>Variables and functions</summary>
+                      <p id="reward-variables" class="control-hint">speed_tracking, forward_progress, alive, upright, energy, smoothness, fall, target_progress, target_distance, target_success, height_tracking, x, y, z, vx, vy, vz, speed, height, initial_height, target_speed, distance, time, dt, pi</p>
+                      <p class="control-hint">Functions: abs, min, max, sqrt, exp, log, sin, cos, tanh, pow, clamp. Arithmetic, comparisons and condition ? yes : no are supported.</p>
+                    </details>
+                  </div>
+                  <button id="reset-task" type="button">Reset task</button>
+                </div>
+              </details>
+              <details class="advanced-training" id="advanced-training">
+                <summary>Advanced</summary>
+                <div class="advanced-fields">
+                  <div class="field" title="Neurons in each hidden layer of both the actor and critic. Larger networks cost more to train and may not learn better.">
+                    <label for="hidden-size">Hidden width</label>
+                    <input id="hidden-size" type="number" min="16" max="256" step="1" value="64" required />
+                  </div>
+                  <div class="field" title="Hidden layers in both the actor and critic. More layers add capacity and training cost; they do not guarantee better movement.">
+                    <label for="hidden-layers">Hidden layers</label>
+                    <input id="hidden-layers" type="number" min="1" max="4" step="1" value="2" required />
+                  </div>
+                  <div class="field" title="Size of each optimizer update. Higher values can learn faster but can also destabilize training.">
+                    <label for="learning-rate">Learning rate</label>
+                    <input id="learning-rate" type="number" min="0.00001" max="0.01" step="any" value="0.0003" required />
+                  </div>
+                  <div class="field" title="Maximum samples per optimizer update, capped by the available rollout. Larger batches use more memory.">
+                    <label for="batch-size">Batch size</label>
+                    <input id="batch-size" type="number" min="16" max="2048" step="1" value="128" aria-describedby="batch-help" required />
+                  </div>
+                  <p id="batch-help" class="control-hint">Batch size is capped by rollout steps × environments.</p>
+                  <div class="field" title="Passes over each collected rollout. More passes take longer and may overfit the same experience.">
+                    <label for="epochs">Epochs</label>
+                    <input id="epochs" type="number" min="1" max="20" step="1" value="4" required />
+                  </div>
+                  <div class="field" title="Steps collected per environment before an update. Longer rollouts use more memory and delay updates.">
+                    <label for="rollout-steps">Rollout steps</label>
+                    <input id="rollout-steps" type="number" min="16" max="1024" step="1" value="128" required />
+                  </div>
+                  <div class="field" title="Weight given to future rewards. Values closer to 1 consider longer-term outcomes.">
+                    <label for="discount">Discount</label>
+                    <input id="discount" type="number" min="0.8" max="0.9999" step="any" value="0.99" required />
+                  </div>
+                  <div class="field" title="Reward for policy randomness during training. Higher values encourage exploration but can prevent a stable gait.">
+                    <label for="entropy-coef">Entropy coefficient</label>
+                    <input id="entropy-coef" type="number" min="0" max="0.1" step="any" value="0.005" required />
+                  </div>
+                  <div class="field" title="PPO update clipping threshold. Larger values permit larger policy changes and can reduce stability.">
+                    <label for="clip-range">Clip range</label>
+                    <input id="clip-range" type="number" min="0.05" max="0.4" step="any" value="0.2" required />
+                  </div>
+                  <div class="field" title="Stop further PPO updates on a rollout when policy divergence exceeds 1.5 times this value. Zero disables the safeguard.">
+                    <label for="target-kl">Target KL</label>
+                    <input id="target-kl" type="number" min="0" max="1" step="any" value="0.03" required />
+                  </div>
+                  <label class="checkbox-field"><input id="best-checkpoint" type="checkbox" checked />Keep best evaluated checkpoint</label>
+                  <p class="control-hint">Evaluate at the requested task and speed. Keep the highest mean validation return and the latest weights. Validation adds simulation time.</p>
+                  <div class="field"><label for="evaluation-interval">Evaluate every (steps)</label><input id="evaluation-interval" type="number" min="4096" max="2000000" step="1" value="16384" required /></div>
+                  <div class="field"><label for="evaluation-episodes">Validation episodes</label><input id="evaluation-episodes" type="number" min="1" max="8" step="1" value="3" required /></div>
+                  <p class="control-hint"><a href="./rig-help.html#training-options" target="_blank" rel="noopener">Training options and checkpoint selection ↗</a></p>
+                  <button id="reset-advanced" type="button">Reset advanced</button>
+                </div>
+              </details>
+              <div class="action-row">
+                <button id="train-button" class="primary" type="button" disabled>Train</button>
+                <button id="stop-button" type="button" hidden>Stop and save</button>
+              </div>
+            </fieldset>
+
+            <section class="training-monitor" aria-label="Training progress">
+              <div class="monitor-heading"><span id="run-status">Idle</span><span id="progress-percent">0%</span></div>
+              <progress id="training-progress" value="0" max="1" aria-label="Training progress"></progress>
+              <dl class="metrics">
+                <div><dt>Steps</dt><dd id="step-count">0 / 262,144</dd></div>
+                <div><dt>Elapsed</dt><dd id="elapsed-value">0:00</dd></div>
+                <div><dt>Episode return</dt><dd id="reward-value">—</dd></div>
+                <div><dt>Velocity</dt><dd id="speed-value">—</dd></div>
+                <div><dt>Throughput</dt><dd id="fps-value">—</dd></div>
+              </dl>
+              <p id="validation-status" class="control-hint" aria-live="polite"></p>
+              <div class="chart-wrap"><canvas id="reward-chart" aria-label="Mean episode return over training steps"></canvas></div>
+            </section>
+          </section>
+
+          <section id="run-panel" class="tab-panel" role="tabpanel" aria-labelledby="run-tab" hidden>
+            <fieldset>
+              <legend>Trained model</legend>
+              <label class="standalone-label" for="saved-run">Model</label>
+              <select id="saved-run" class="full-width"><option value="">No saved models</option></select>
+              <div class="field"><label for="checkpoint-choice">Checkpoint</label><select id="checkpoint-choice"><option value="best">Best evaluated</option><option value="latest">Latest</option></select></div>
+              <p id="checkpoint-status" class="control-hint">Older models use their latest saved weights.</p>
+              <button id="load-run" class="full-width load-model" type="button" disabled>Use model settings</button>
+              <div class="field">
+                <label for="eval-speed">Target speed</label>
+                <div class="measurement"><input id="eval-speed" type="number" min="0.1" max="3" step="0.01" value="1" /><span>m/s</span></div>
+              </div>
+              <div class="field">
+                <label for="eval-seed">Seed</label>
+                <input id="eval-seed" type="number" min="0" max="2147483647" step="1" value="10007" />
+              </div>
+              <div class="action-row"><button id="replay-button" class="primary" type="button" disabled>Run inference</button></div>
+            </fieldset>
+            <div id="evaluation-summary" class="evaluation-summary" aria-live="polite" hidden></div>
+            <details id="continue-training"><summary>Continue training</summary>
+              <p id="continuation-status" class="control-hint">Choose a model with saved training state.</p>
+              <div class="field"><label for="additional-steps">Additional steps</label><input id="additional-steps" type="number" min="4096" max="2000000" step="1" value="65536" required /></div>
+              <button id="resume-training" type="button" disabled>Continue latest checkpoint</button>
+              <p class="control-hint">Keeps the saved body, objective and training settings. Creates a new run; the original is preserved. Episodes restart while learned weights, optimizer, normalization, random state and curriculum continue.</p>
+            </details>
+            <div class="export-links">
+              <a id="checkpoint-link" class="disabled" aria-disabled="true">Download model</a>
+              <a id="body-link" class="disabled" aria-disabled="true">Body XML</a>
+            </div>
+            <button id="import-model" type="button" class="import-model" disabled>Import model</button>
+            <input id="model-file" type="file" accept=".json,.onnx,.zip,application/json" hidden />
+            <p id="model-import-help" class="control-hint import-help">ONNX uses the current body; export its interface to match observations and actions.</p>
+            <button id="export-interface" type="button" class="full-width">Export interface</button>
+          </section>
+
+          <fieldset class="environment-fields">
+            <legend>Environment</legend>
+            <div class="field">
+              <label for="gravity">Gravity</label>
+              <div class="measurement"><input id="gravity" type="number" min="0.5" max="20" step="0.01" value="9.81" /><span>m/s²</span></div>
+            </div>
+            <div class="field">
+              <label for="friction">Floor friction</label>
+              <input id="friction" type="number" min="0.05" max="3" step="0.05" value="1" />
+            </div>
+          </fieldset>
+        </div>
+      </aside>
+
+      <section class="viewer" aria-label="Physics simulation">
+        <div class="viewer-toolbar">
+          <div class="viewer-identity"><span id="specimen-name">Quadruped</span><span id="viewer-mode">Body preview</span><span id="physics-label" class="physics-label">Planar physics</span></div>
+          <div class="camera-controls">
+            <label class="view-select" for="view-angle"><span class="sr-only">Camera view</span>
+              <select id="view-angle"><option value="perspective">Perspective</option><option value="side">Side</option><option value="front">Front</option></select>
+            </label>
+            <label id="follow-camera-control" class="checkbox-field" title="Smooth horizontal tracking during playback; camera height stays steady."><input id="follow-camera" type="checkbox" checked />Follow</label>
+            <span id="training-camera-hint" class="control-hint" title="Training shows samples from different episodes. The camera stays fixed so resets do not move the whole scene. Drag to rotate or use Reset view." hidden>Fixed view</span>
+            <button id="reset-camera" type="button">Reset view</button>
+          </div>
+        </div>
+        <div id="arena" class="arena">
+          <canvas id="simulation" aria-label="Physics simulation. Drag to rotate. Scroll to zoom." title="Drag to rotate · Scroll to zoom"></canvas>
+          <div id="arena-empty" class="arena-empty" role="status">Loading simulation…</div>
+          <div id="replay-progress" class="replay-progress" hidden></div>
+        </div>
+        <div id="inference-controls" class="inference-controls" hidden>
+          <span class="control-hint">Pause affects playback only.</span>
+          <button id="stop-inference" type="button">Stop inference</button>
+        </div>
+        <div class="playback-toolbar">
+          <button id="play-pause" type="button" disabled>Pause</button>
+          <label class="sr-only" for="timeline">Playback position</label>
+          <input id="timeline" type="range" min="0" max="1" step="0.001" value="0" disabled />
+          <output id="sim-time" for="timeline">0.00 s</output>
+          <label class="sr-only" for="playback-speed">Playback speed</label>
+          <select id="playback-speed" disabled><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

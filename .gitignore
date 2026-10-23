@@ -1,0 +1,15 @@
+.venv/
+node_modules/
+morpholab/static/vendor/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+runs/
+test-results/
+*.log
+rigging.local.json
+experiments/
+.rig-jobs/
+

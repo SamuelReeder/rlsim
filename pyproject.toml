@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "morpholab"
+version = "0.1.0"
+description = "RLsim: editable creatures learning locomotion with MuJoCo and GPU or CPU PPO"
+requires-python = ">=3.11"
+dependencies = [
+  "mujoco==3.16.0",
+  "gymnasium==1.4.0",
+  "stable-baselines3==2.9.0",
+  "fastapi==0.152.0",
+  "pydantic>=2.14,<3",
+  "uvicorn>=0.35,<1",
+  "scipy>=1.14,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "httpx>=0.28", "playwright>=1.50"]
+
+[project.scripts]
+rlsim = "morpholab.cli:main"
+morpholab = "morpholab.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["morpholab*"]
+
+[tool.setuptools.package-data]
+morpholab = ["static/*", "static/demos/*", "static/vendor/*", "static/vendor/mujoco/*", "static/vendor/ort/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

@@ -1,0 +1,26 @@
+{
+  "name": "rlsim",
+  "version": "0.1.0",
+  "private": true,
+  "description": "RLsim: editable MuJoCo creatures with browser and native PPO training",
+  "scripts": {
+    "vendor:browser": "node scripts/vendor-browser.mjs",
+    "build:static": "node scripts/build-static.mjs",
+    "test:physics": "node tests/browser_physics_check.mjs",
+    "test:policy": "node tests/browser_policy_check.mjs",
+    "test": "node --test tests/*_check.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@mujoco/mujoco": "3.16.0",
+    "@tensorflow/tfjs": "4.22.0",
+    "@tensorflow/tfjs-backend-webgpu": "4.22.0",
+    "esbuild": "0.28.2",
+    "fast-xml-parser": "5.11.2",
+    "fflate": "0.8.3",
+    "onnxruntime-web": "1.30.0",
+    "three": "0.186.1"
+  }
+}
