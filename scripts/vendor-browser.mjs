@@ -22,9 +22,11 @@ const assets = [
 const licenses = [
   ["mujoco/LICENSE", "https://raw.githubusercontent.com/google-deepmind/mujoco/3.16.0/LICENSE", "Apache License"],
   ["tensorflow-LICENSE", "https://raw.githubusercontent.com/tensorflow/tfjs/tfjs-v4.22.0/LICENSE", "Apache License"],
-  ["onnxruntime-LICENSE", "https://raw.githubusercontent.com/microsoft/onnxruntime/v1.30.0/LICENSE", "MIT License"],
-  ["onnxruntime-ThirdPartyNotices.txt", "https://raw.githubusercontent.com/microsoft/onnxruntime/v1.30.0/ThirdPartyNotices.txt", "Copyright"],
   ["nodable-entities-LICENSE", "https://raw.githubusercontent.com/nodable/val-parsers/main/LICENSE", "MIT License"],
+];
+const bundledLicenses = [
+  ["scripts/licenses/onnxruntime-LICENSE", "onnxruntime-LICENSE"],
+  ["scripts/licenses/onnxruntime-ThirdPartyNotices.txt", "onnxruntime-ThirdPartyNotices.txt"],
 ];
 const localLicenses = [
   ["three/LICENSE", "three-LICENSE"], ["fflate/LICENSE", "fflate-LICENSE"],
@@ -84,6 +86,9 @@ export async function vendorBrowser() {
       await writeFile(output, text);
     }
   }
+  for (const [source, destination] of bundledLicenses) {
+    await copyFile(path.join(root, source), path.join(vendor, destination));
+  }
   for (const [source, destination] of localLicenses) {
     await copyFile(path.join(root, "node_modules", source), path.join(vendor, destination));
   }
@@ -130,6 +135,7 @@ This notice identifies dependencies; it is not an endorsement by their authors.
   }
   await writeFile(path.join(vendor, "manifest.json"), JSON.stringify({packages, transitive, files,
     licenses: [...licenses.map(([file, source]) => ({file, source})),
+      ...bundledLicenses.map(([source, file]) => ({file, source})),
       ...localLicenses.map(([source, file]) => ({file, source: `node_modules/${source}`}))]}, null, 2) + "\n");
   console.log(`Prepared ${files.length} browser runtime assets in morpholab/static/vendor`);
 }
